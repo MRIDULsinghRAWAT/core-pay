@@ -3,10 +3,11 @@
 [![Java](https://img.shields.io/badge/Java-17%2B-orange.svg)](https://www.oracle.com/java/)
 [![Architecture](https://img.shields.io/badge/Architecture-Double--Entry%20Ledger-blue.svg)]()
 [![Idempotency](https://img.shields.io/badge/Engine-Idempotent%20Safe-green.svg)]()
+[![AI RAG Assistant](https://img.shields.io/badge/AI-RAG%20Financial%20Assistant-purple.svg)]()
 [![UI](https://img.shields.io/badge/Frontend-Dark%20Frosted%20Glassmorphism-violet.svg)]()
 [![License](https://img.shields.io/badge/License-MIT-brightgreen.svg)]()
 
-**CorePay** is an enterprise-grade financial ledger engine and RESTful API built in Java. It handles atomic payment transfers, double-entry accounting logs, and sliding-window idempotency guarantees with zero-downtime hybrid storage fallback. It comes equipped with a modern dark frosted glass web dashboard for real-time transaction monitoring and account management.
+**CorePay** is an enterprise-grade financial ledger engine and RESTful API built in Java. It handles atomic payment transfers, double-entry accounting logs, and sliding-window idempotency guarantees with zero-downtime hybrid storage fallback. It comes equipped with a modern dark frosted glass web dashboard and a real-time **AI RAG Financial Assistant** for transaction monitoring and account management.
 
 ---
 
@@ -30,11 +31,12 @@ For in-depth architectural details, refer to [KEY_FEATURES.md](KEY_FEATURES.md).
 - **Atomic Double-Entry Accounting:** Every transfer atomically logs matching `DEBIT` (source account) and `CREDIT` (target account) records, preserving system-wide balance integrity.
 - **Idempotency Protection Engine:** Prevents duplicate charges or double transfers during network retries using custom `X-Idempotency-Key` deduplication.
 - **Smart Hybrid Storage (Zero Downtime):** Connects to MySQL 8.0 for production storage and automatically falls back to a high-performance **In-Memory Store** if MySQL is offline.
+- **Real-Time AI RAG Financial Assistant:** Floating glassmorphic widget querying live ledger data (liquidity metrics, accounts, recent transfers, double-entry rules) with dual-mode support for Google Gemini API or intelligent offline RAG engine fallback.
 - **Dark Frosted Glass Web Dashboard:**
   - **Home View:** Virtual card display (`CorePay Vault`), system liquidity metrics, quick action pills, favorite transfer contacts, and recent transaction feeds.
   - **Cards & Accounts View:** Full account directory with instant search filtering and quick transfer shortcuts.
   - **History View:** Complete audit trail showing `DEBIT` / `CREDIT` breakdowns for every transaction.
-  - **Settings View:** Configurable API URLs, live polling rates (3s, 5s, 10s, manual), and system diagnostics.
+  - **Settings View:** Configurable API URLs, Gemini AI API key inputs, live polling rates (3s, 5s, 10s, manual), and system diagnostics.
 
 ---
 
@@ -52,7 +54,7 @@ core-pay/
 ├── frontend/
 │   ├── index.html             # Multi-view Admin Dashboard HTML
 │   ├── style.css              # Dark Frosted Glassmorphism UI styles
-│   └── script.js              # SPA navigation, live polling, and API client
+│   └── script.js              # SPA navigation, RAG AI Assistant, live polling, & API client
 └── java-backend/
     ├── pom.xml                # Maven build configuration
     └── src/

@@ -1,6 +1,6 @@
 # CorePay | Key Features & Architectural Documentation
 
-CorePay is a high-performance financial ledger engine and RESTful API built in Java. It guarantees financial balance integrity through atomic double-entry accounting, prevents duplicate transactions via sliding-window idempotency deduplication, and provides zero-downtime operations through smart hybrid storage.
+CorePay is a high-performance financial ledger engine and RESTful API built in Java. It guarantees financial balance integrity through atomic double-entry accounting, prevents duplicate transactions via sliding-window idempotency deduplication, provides zero-downtime operations through smart hybrid storage, and includes an embedded **AI RAG Financial Assistant**.
 
 ---
 
@@ -26,7 +26,20 @@ Network instability or duplicate button presses can lead to double transfers. Co
 
 ---
 
-## 3. Smart Hybrid Storage (Zero-Downtime Fallback)
+## 3. Real-Time AI RAG Financial Assistant
+
+CorePay features an intelligent **Retrieval-Augmented Generation (RAG) Assistant** embedded directly into the glassmorphic dashboard:
+
+- **Dynamic RAG Context Builder:** Gathers real-time context including total liquidity, active account balances, recent `DEBIT`/`CREDIT` audit logs, and accounting rules.
+- **Natural Language Financial Search:**
+  - *"Summarize reserve liquidity"*
+  - *"Who received money recently?"*
+  - *"Explain double entry accounting rules"*
+- **Dual-Engine Architecture:** Connects to Google Gemini API when an API key is configured in Settings, or falls back to CorePay's built-in intelligent RAG processor.
+
+---
+
+## 4. Smart Hybrid Storage (Zero-Downtime Fallback)
 
 CorePay features an intelligent dual-mode storage engine designed to ensure uninterrupted transaction processing:
 
@@ -36,22 +49,22 @@ CorePay features an intelligent dual-mode storage engine designed to ensure unin
 
 ---
 
-## 4. Modern Payment Application Web Dashboard
+## 5. Modern Payment Application Web Dashboard
 
 CorePay includes a responsive, single-page web dashboard built with HTML5 and CSS3:
 
 - **Aesthetics & Theme:** Pure pitch-black background (`#000000`) with frosted glassmorphism cards (`backdrop-filter: blur(35px)`), subtle inner reflections, and deep purple accents.
 - **Multi-View SPA System:**
-  - **Home View:** Virtual card display (`CorePay Vault`), active liquidity metrics, quick action pills, favorite transfer contacts, and recent transaction feeds.
-  - **Cards & Accounts View:** Full directory of linked accounts with live balances and quick transfer shortcuts.
+  - **Home View:** Virtual card display (`CorePay Vault`), system liquidity metrics, quick action pills, favorite transfer contacts, and recent transaction feeds.
+  - **Cards & Accounts View:** Full account directory with instant search filtering and quick transfer shortcuts.
   - **History View:** Audit log displaying detailed `DEBIT` / `CREDIT` breakdowns for every transaction.
-  - **Settings View:** Configurable API URLs, live polling intervals (3s, 5s, 10s, manual), and system diagnostics.
+  - **Settings View:** Configurable API URLs, Gemini AI API key inputs, live polling rates (3s, 5s, 10s, manual), and system diagnostics.
 - **Live Real-Time Polling:** Automatically refreshes account balances and transaction logs every 3 seconds.
 - **Interactive Send Money Modal:** Features pre-filled recipient selections and quick preset amount buttons (`+$100`, `+$250`, `+$500`, `+$1000`).
 
 ---
 
-## 5. Lightweight Native Java REST Server
+## 6. Lightweight Native Java REST Server
 
 CorePay runs on a standalone Java HTTP server without external web framework dependencies:
 
@@ -61,7 +74,7 @@ CorePay runs on a standalone Java HTTP server without external web framework dep
 
 ---
 
-## 6. REST API Endpoint Summary
+## 7. REST API Endpoint Summary
 
 | HTTP Method | Endpoint | Description |
 | :--- | :--- | :--- |
@@ -74,5 +87,6 @@ CorePay runs on a standalone Java HTTP server without external web framework dep
 ## Technical Stack Summary
 
 - **Backend:** Java 17+, JDBC, Native Java HTTP Server
+- **AI RAG Engine:** Real-Time Ledger RAG Context + Google Gemini API / Built-in Fallback
 - **Database:** MySQL 8.0 (with automatic In-Memory fallback)
 - **Frontend:** Vanilla HTML5, CSS3 Glassmorphism, JavaScript ES6+

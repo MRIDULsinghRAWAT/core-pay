@@ -604,7 +604,7 @@ async function generateRAGResponse(query) {
     }
 
     if (q.includes('idempotency') || q.includes('duplicate') || q.includes('key')) {
-        return `CorePay's <strong>Idempotency Engine</strong> tracks `X-Idempotency-Key` headers in a sliding-window queue (`IdempotencyQueue.java`). Any duplicate transfer request within the window is blocked with HTTP 409 Conflict.`;
+        return `CorePay's <strong>Idempotency Engine</strong> tracks X-Idempotency-Key headers in a sliding-window queue (IdempotencyQueue.java). Any duplicate transfer request within the window is blocked with HTTP 409 Conflict.`;
     }
 
     if (q.includes('account') || q.includes('list')) {
