@@ -10,6 +10,10 @@ document.addEventListener('DOMContentLoaded', () => {
     initRAGEngine();
 });
 
+window.sendQuickPrompt = sendQuickPrompt;
+window.openTransferModal = openTransferModal;
+window.setPresetAmount = setPresetAmount;
+
 function initApp() {
     setupViewNavigation();
     setupEventListeners();
