@@ -40,14 +40,14 @@ graph TD
     end
 
     %% Flow Connections
-    UI -->|"HTTP REST Requests (JSON)"| Server
+    UI -->|"HTTP REST Requests"| Server
     AIChat -->|"Prompt + RAG Context"| LLM
     Server --> CORS
     CORS --> IdemQueue
     IdemQueue -->|"Key Validated"| Ledger
     Ledger -->|"Primary SQL Attempt"| MySQL
-    Ledger -.->"Fallback if SQL Fails"| InMemory
-    UI -.->"Polls Accounts & Transactions"| RAGContext
+    Ledger -->|"Fallback if SQL Fails"| InMemory
+    UI -->|"Polls Accounts & Transactions"| RAGContext
     RAGContext -->|"Injects Live Ledger Data"| AIChat
 ```
 
