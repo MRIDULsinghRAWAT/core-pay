@@ -22,6 +22,9 @@
 ### 3. Send Money Transfer Modal (Preset Amounts & Idempotency)
 ![CorePay Transfer Modal](docs/images/transfer_modal.png)
 
+### 4. Real-Time AI RAG Assistant Drawer (Live Ledger Intelligence)
+![CorePay AI Assistant](docs/images/ai_assistant.png)
+
 ---
 
 ## Key Features & Architecture
@@ -50,7 +53,8 @@ core-pay/
 │   └── images/                # Dashboard Screenshots & UI Assets
 │       ├── dashboard.png
 │       ├── history.png
-│       └── transfer_modal.png
+│       ├── transfer_modal.png
+│       └── ai_assistant.png
 ├── frontend/
 │   ├── index.html             # Multi-view Admin Dashboard HTML
 │   ├── style.css              # Dark Frosted Glassmorphism UI styles
