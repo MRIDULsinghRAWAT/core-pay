@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CorePay | Financial Ledger & Payment Engine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo-icon">CP</div>
+                <div class="brand-text">
+                    <h2>CorePay</h2>
+                    <span class="badge">Ledger v1.0</span>
+                </div>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="#dashboard" class="nav-item active" data-view="dashboard">
+                    <span>Home</span>
+                </a>
+                <a href="#accounts" class="nav-item" data-view="accounts">
+                    <span>Cards & Accounts</span>
+                </a>
+                <a href="#ledger" class="nav-item" data-view="ledger">
+                    <span>History</span>
+                </a>
+                <a href="#settings" class="nav-item" data-view="settings">
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="server-status">
+                <div class="status-indicator online" id="statusDot"></div>
+                <div class="status-info">
+                    <span class="status-label">Backend Engine</span>
+                    <span class="status-value" id="statusText">Connected (Port 8080)</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top App Profile Bar -->
+            <div class="app-profile-bar">
+                <div class="user-profile">
+                    <div class="avatar-circle">CP</div>
+                    <div class="profile-details">
+                        <span class="user-name">CorePay Admin</span>
+                        <span class="user-handle">@corepay</span>
+                    </div>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-outline refreshBtn">Refresh</button>
+                    <button class="btn btn-primary openTransferModalBtn">+ Transfer</button>
+                </div>
+            </div>
+
+            <!-- 1. DASHBOARD VIEW -->
+            <div class="view-section active" id="view-dashboard">
+                
+                <!-- Main Payment Card Banner -->
+                <div class="payment-hero-grid">
+                    <!-- Virtual Frosted Glass CorePay Card -->
+                    <div class="virtual-card">
+                        <div class="card-brand-row">
+                            <span class="card-holder-title">CorePay Vault</span>
+                            <span class="card-type">VISA</span>
+                        </div>
+                        <div class="card-number">3455 4562 7710 3507</div>
+                        <div class="card-footer-row">
+                            <div>
+                                <span class="card-meta-label">Your Balance</span>
+                                <div class="card-balance" id="metricLiquidity">$0.00</div>
+                            </div>
+                            <div>
+                                <span class="card-meta-label">Valid Thru</span>
+                                <div class="card-expiry">02/30</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Payment Actions -->
+                    <div class="action-buttons-card">
+                        <h3 class="card-subtitle">Quick Actions</h3>
+                        <div class="action-pills-grid">
+                            <button class="action-pill openTransferModalBtn">
+                                <span class="action-pill-title">Transfer</span>
+                                <span class="action-pill-sub">Instant Payment</span>
+                            </button>
+                            <button class="action-pill openTransferModalBtn">
+                                <span class="action-pill-title">Receive</span>
+                                <span class="action-pill-sub">Collect Funds</span>
+                            </button>
+                            <button class="action-pill nav-shortcut" data-target="accounts">
+                                <span class="action-pill-title">Accounts</span>
+                                <span class="action-pill-sub">Linked Vaults</span>
+                            </button>
+                            <button class="action-pill nav-shortcut" data-target="ledger">
+                                <span class="action-pill-title">History</span>
+                                <span class="action-pill-sub">Audit Trail</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Transfer Contacts -->
+                <div class="section-container">
+                    <div class="section-header-row">
+                        <h3 class="section-title">Quick Transfer Contacts</h3>
+                        <span class="section-link openTransferModalBtn">+ New Recipient</span>
+                    </div>
+                    <div class="quick-contacts-row" id="quickContactsRow">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Recent Transactions Feed -->
+                <section class="card table-card">
+                    <div class="card-header">
+                        <h3>Recent Transactions</h3>
+                        <div class="table-actions">
+                            <span class="polling-badge" id="pollingBadge">
+                                <span class="pulse-dot"></span> Live (3s)
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Ref ID</th>
+                                    <th>From Account</th>
+                                    <th>To Account</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactionTableBody">
+                                <tr>
+                                    <td colspan="6" class="text-center">Loading transactions...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <!-- 2. ACCOUNTS VIEW -->
+            <div class="view-section" id="view-accounts">
+                <header class="top-header">
+                    <div>
+                        <h1 class="page-title">Linked Accounts</h1>
+                        <p class="page-subtitle">Manage active payment accounts and balances</p>
+                    </div>
+                    <button class="btn btn-primary openTransferModalBtn">+ Transfer</button>
+                </header>
+
+                <div class="filter-bar">
+                    <input type="text" id="accountSearchInput" class="form-control search-input" placeholder="Search accounts by holder or number...">
+                </div>
+
+                <section class="accounts-grid-full" id="accountsGridFull">
+                    <!-- Rendered dynamically -->
+                </section>
+            </div>
+
+            <!-- 3. LEDGER ENTRIES VIEW -->
+            <div class="view-section" id="view-ledger">
+                <header class="top-header">
+                    <div>
+                        <h1 class="page-title">Transaction History</h1>
+                        <p class="page-subtitle">Comprehensive double-entry DEBIT & CREDIT log</p>
+                    </div>
+                    <button class="btn btn-primary openTransferModalBtn">+ Transfer</button>
+                </header>
+
+                <div class="filter-bar">
+                    <input type="text" id="ledgerSearchInput" class="form-control search-input" placeholder="Search by Ref ID or Account Number...">
+                    <button class="btn btn-outline refreshBtn">Refresh</button>
+                </div>
+
+                <section class="card table-card">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Ref ID</th>
+                                    <th>Source (DEBIT)</th>
+                                    <th>Target (CREDIT)</th>
+                                    <th>Amount</th>
+                                    <th>Accounting Entry</th>
+                                    <th>Status</th>
+                                    <th>Timestamp</th>
+                                </tr>
+                            </thead>
+                            <tbody id="fullLedgerTableBody">
+                                <!-- Rendered dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <!-- 4. SETTINGS VIEW -->
+            <div class="view-section" id="view-settings">
+                <header class="top-header">
+                    <div>
+                        <h1 class="page-title">CorePay Settings</h1>
+                        <p class="page-subtitle">Configure backend engine and API connection</p>
+                    </div>
+                </header>
+
+                <div class="settings-grid">
+                    <div class="card settings-card">
+                        <h3 class="card-title">API Connection</h3>
+                        <div class="form-group">
+                            <label for="apiUrlInput">API Base URL</label>
+                            <input type="text" id="apiUrlInput" class="form-control mono" value="http://localhost:8080/api">
+                        </div>
+                        <div class="form-group">
+                            <label for="pollingRateSelect">Auto Refresh Frequency</label>
+                            <select id="pollingRateSelect" class="form-control">
+                                <option value="3000" selected>Every 3 seconds</option>
+                                <option value="5000">Every 5 seconds</option>
+                                <option value="10000">Every 10 seconds</option>
+                                <option value="0">Manual Refresh Only</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" id="saveSettingsBtn">Save Settings</button>
+                    </div>
+
+                    <div class="card settings-card">
+                        <h3 class="card-title">Engine Diagnostics</h3>
+                        <div class="info-list">
+                            <div class="info-item">
+                                <span class="info-label">Queue Capacity</span>
+                                <span class="info-val">1000 Keys</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Accounting Format</span>
+                                <span class="info-val">Double-Entry Ledger</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Database Mode</span>
+                                <span class="info-val" id="dbModeDisplay">Auto-Detect</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Server Host</span>
+                                <span class="info-val">localhost:8080</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Payment Transfer Modal -->
+    <div class="modal-overlay" id="transferModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Transfer Funds</h3>
+                <button class="close-btn" id="closeModalBtn">&times;</button>
+            </div>
+            <form id="transferForm" class="modal-body">
+                <div class="form-group">
+                    <label for="sourceAccountSelect">From Account</label>
+                    <select id="sourceAccountSelect" class="form-control" required>
+                        <option value="">Select Source Account</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="targetAccountSelect">To Account</label>
+                    <select id="targetAccountSelect" class="form-control" required>
+                        <option value="">Select Target Account</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="transferAmount">Transfer Amount ($)</label>
+                    <input type="number" step="0.01" min="0.01" id="transferAmount" class="form-control large-amount-input" placeholder="1500.00" required>
+                </div>
+
+                <div class="preset-amounts-row">
+                    <button type="button" class="preset-btn" onclick="setPresetAmount(100)">+$100</button>
+                    <button type="button" class="preset-btn" onclick="setPresetAmount(250)">+$250</button>
+                    <button type="button" class="preset-btn" onclick="setPresetAmount(500)">+$500</button>
+                    <button type="button" class="preset-btn" onclick="setPresetAmount(1000)">+$1000</button>
+                </div>
+
+                <div class="form-group" style="margin-top: 1rem;">
+                    <label for="idempotencyKey">Idempotency Key (Optional)</label>
+                    <input type="text" id="idempotencyKey" class="form-control mono" placeholder="e.g. key_9f8a7b6c">
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" id="cancelTransferBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="submitTransferBtn">Confirm & Transfer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
