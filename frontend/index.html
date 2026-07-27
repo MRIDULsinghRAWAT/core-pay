@@ -215,16 +215,20 @@
                 <header class="top-header">
                     <div>
                         <h1 class="page-title">CorePay Settings</h1>
-                        <p class="page-subtitle">Configure backend engine and API connection</p>
+                        <p class="page-subtitle">Configure backend engine, AI Assistant, and API connection</p>
                     </div>
                 </header>
 
                 <div class="settings-grid">
                     <div class="card settings-card">
-                        <h3 class="card-title">API Connection</h3>
+                        <h3 class="card-title">API & AI Configuration</h3>
                         <div class="form-group">
                             <label for="apiUrlInput">API Base URL</label>
                             <input type="text" id="apiUrlInput" class="form-control mono" value="http://localhost:8080/api">
+                        </div>
+                        <div class="form-group">
+                            <label for="geminiApiKeyInput">Gemini AI API Key (Optional)</label>
+                            <input type="password" id="geminiApiKeyInput" class="form-control mono" placeholder="AIZASy...">
                         </div>
                         <div class="form-group">
                             <label for="pollingRateSelect">Auto Refresh Frequency</label>
@@ -250,6 +254,10 @@
                                 <span class="info-val">Double-Entry Ledger</span>
                             </div>
                             <div class="info-item">
+                                <span class="info-label">RAG AI Assistant</span>
+                                <span class="info-val">Active (Live Ledger Context)</span>
+                            </div>
+                            <div class="info-item">
                                 <span class="info-label">Database Mode</span>
                                 <span class="info-val" id="dbModeDisplay">Auto-Detect</span>
                             </div>
@@ -262,6 +270,43 @@
                 </div>
             </div>
         </main>
+    </div>
+
+    <!-- Floating AI RAG Assistant Trigger Button -->
+    <button class="ai-trigger-btn" id="aiChatTrigger">
+        <div class="ai-btn-glow"></div>
+        <span class="ai-btn-title">CP AI</span>
+    </button>
+
+    <!-- Glassmorphic AI RAG Chat Drawer -->
+    <div class="ai-chat-drawer" id="aiChatDrawer">
+        <div class="ai-chat-header">
+            <div class="ai-header-info">
+                <div class="ai-avatar">AI</div>
+                <div>
+                    <h4>CorePay AI Assistant</h4>
+                    <span class="ai-status"><span class="pulse-dot"></span> Live RAG Context</span>
+                </div>
+            </div>
+            <button class="ai-close-btn" id="aiChatCloseBtn">&times;</button>
+        </div>
+
+        <div class="ai-messages-container" id="aiChatMessages">
+            <div class="ai-msg bot">
+                Hello! I am your <strong>CorePay AI Assistant</strong>. I have real-time RAG context of all live balances, account holders, and double-entry transaction history. How can I help you today?
+            </div>
+        </div>
+
+        <div class="ai-quick-prompts">
+            <button class="ai-chip" onclick="sendQuickPrompt('Summarize total reserve balance and liquidity')">Reserve Liquidity</button>
+            <button class="ai-chip" onclick="sendQuickPrompt('Who received money recently?')">Recent Transfers</button>
+            <button class="ai-chip" onclick="sendQuickPrompt('Explain double entry accounting rules')">Double-Entry Rules</button>
+        </div>
+
+        <div class="ai-chat-input-row">
+            <input type="text" id="aiChatInput" class="form-control" placeholder="Ask AI about accounts, balances, or transactions..." autocomplete="off">
+            <button class="btn btn-primary btn-sm" id="aiChatSendBtn">Send</button>
+        </div>
     </div>
 
     <!-- Payment Transfer Modal -->
