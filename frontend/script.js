@@ -3,9 +3,11 @@ let pollingIntervalId = null;
 let currentPollingRate = 3000;
 let cachedAccounts = [];
 let cachedTransactions = [];
+let userGeminiApiKey = '';
 
 document.addEventListener('DOMContentLoaded', () => {
     initApp();
+    initRAGEngine();
 });
 
 function initApp() {
@@ -119,9 +121,11 @@ function setupEventListeners() {
     if (saveSettingsBtn) {
         saveSettingsBtn.addEventListener('click', () => {
             const urlInput = document.getElementById('apiUrlInput').value.trim();
+            const apiKeyInput = document.getElementById('geminiApiKeyInput').value.trim();
             const rateSelect = parseInt(document.getElementById('pollingRateSelect').value);
             
             if (urlInput) API_BASE_URL = urlInput;
+            if (apiKeyInput) userGeminiApiKey = apiKeyInput;
             currentPollingRate = rateSelect;
             startPolling(currentPollingRate);
 
@@ -132,7 +136,7 @@ function setupEventListeners() {
                     : `<span>Manual Refresh</span>`;
             }
 
-            alert('Application settings updated successfully!');
+            alert('CorePay settings and AI configuration updated successfully!');
             fetchAccounts();
             fetchTransactions();
         });
@@ -253,7 +257,7 @@ function renderFullAccounts(accounts) {
                 <div class="balance-amount">$${Number(acc.balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
             </div>
             <div class="account-actions">
-                <button class="btn btn-sm btn-primary" onclick="openTransferModal(${acc.id})">Send Money</button>
+                <button class="btn btn-sm btn-primary" onclick="openTransferModal(${acc.id})">Transfer</button>
             </div>
         </div>
     `).join('');
@@ -303,7 +307,7 @@ function renderTransactions(transactions) {
     const recent = transactions.slice(0, 5);
     tbody.innerHTML = recent.map(tx => `
         <tr>
-            <td style="font-family: var(--font-mono); font-weight: 600; color: var(--accent-lime);">${escapeHtml(tx.ref)}</td>
+            <td style="font-family: var(--font-mono); font-weight: 600; color: var(--accent-purple-light);">${escapeHtml(tx.ref)}</td>
             <td>Acc #${tx.sourceId}</td>
             <td>Acc #${tx.targetId}</td>
             <td style="font-weight: 800; color: var(--accent-green);">$${Number(tx.amount).toFixed(2)}</td>
@@ -323,7 +327,7 @@ function renderFullLedgerTable(transactions) {
 
     tbody.innerHTML = transactions.map(tx => `
         <tr>
-            <td style="font-family: var(--font-mono); font-weight: 700; color: var(--accent-lime);">${escapeHtml(tx.ref)}</td>
+            <td style="font-family: var(--font-mono); font-weight: 700; color: var(--accent-purple-light);">${escapeHtml(tx.ref)}</td>
             <td><span class="entry-tag debit">DEBIT</span> Acc #${tx.sourceId}</td>
             <td><span class="entry-tag credit">CREDIT</span> Acc #${tx.targetId}</td>
             <td style="font-weight: 800;">$${Number(tx.amount).toFixed(2)}</td>
@@ -450,6 +454,162 @@ function renderTransactionsFallback() {
     renderTransactions(fallbackTxs);
     renderFullLedgerTable(fallbackTxs);
     updateMetrics();
+}
+
+/* ================================================================
+   AI RAG ASSISTANT ENGINE
+   ================================================================ */
+function initRAGEngine() {
+    const triggerBtn = document.getElementById('aiChatTrigger');
+    const drawer = document.getElementById('aiChatDrawer');
+    const closeBtn = document.getElementById('aiChatCloseBtn');
+    const sendBtn = document.getElementById('aiChatSendBtn');
+    const input = document.getElementById('aiChatInput');
+
+    if (!triggerBtn || !drawer) return;
+
+    triggerBtn.addEventListener('click', () => {
+        drawer.classList.toggle('active');
+    });
+
+    closeBtn.addEventListener('click', () => {
+        drawer.classList.remove('active');
+    });
+
+    sendBtn.addEventListener('click', () => handleUserChatMessage());
+    input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleUserChatMessage();
+    });
+}
+
+function sendQuickPrompt(promptText) {
+    const input = document.getElementById('aiChatInput');
+    input.value = promptText;
+    handleUserChatMessage();
+}
+
+async function handleUserChatMessage() {
+    const input = document.getElementById('aiChatInput');
+    const container = document.getElementById('aiChatMessages');
+    const userQuery = input.value.trim();
+
+    if (!userQuery) return;
+
+    // Append User Message Bubble
+    appendChatMessage('user', escapeHtml(userQuery));
+    input.value = '';
+
+    // Scroll to bottom
+    container.scrollTop = container.scrollHeight;
+
+    // Show AI Typing Indicator
+    const typingId = 'typing_' + Date.now();
+    const typingBubble = document.createElement('div');
+    typingBubble.className = 'ai-msg bot';
+    typingBubble.id = typingId;
+    typingBubble.innerHTML = 'Thinking...';
+    container.appendChild(typingBubble);
+    container.scrollTop = container.scrollHeight;
+
+    // Process RAG Response
+    const aiResponse = await generateRAGResponse(userQuery);
+
+    // Remove typing bubble and append AI response
+    const bubbleToReplace = document.getElementById(typingId);
+    if (bubbleToReplace) bubbleToReplace.remove();
+
+    appendChatMessage('bot', aiResponse);
+    container.scrollTop = container.scrollHeight;
+}
+
+function appendChatMessage(sender, htmlContent) {
+    const container = document.getElementById('aiChatMessages');
+    const msg = document.createElement('div');
+    msg.className = `ai-msg ${sender}`;
+    msg.innerHTML = htmlContent;
+    container.appendChild(msg);
+}
+
+function buildRAGContext() {
+    const totalLiquidity = cachedAccounts.reduce((sum, acc) => sum + Number(acc.balance || 0), 0);
+    const accountDetails = cachedAccounts.map(a => `${a.holderName} (${a.accountNumber}): $${Number(a.balance).toFixed(2)}`).join('\n');
+    const recentTxLogs = cachedTransactions.slice(0, 10).map(t => `Ref: ${t.ref} | Source Acc #${t.sourceId} -> Target Acc #${t.targetId} | Amount: $${Number(t.amount).toFixed(2)} | Status: ${t.status} | Date: ${t.createdAt}`).join('\n');
+
+    return `=== LIVE COREPAY LEDGER RAG CONTEXT ===
+System Total Liquidity: $${totalLiquidity.toFixed(2)} USD
+Total Active Accounts: ${cachedAccounts.length}
+Registered Accounts:
+${accountDetails}
+
+Recent Transaction Audit Trail:
+${recentTxLogs || 'No transactions logged yet.'}
+
+System Rules:
+1. Double-Entry Accounting: Every transfer logs matching DEBIT (source) and CREDIT (target) entries.
+2. Idempotency Protection: Duplicate requests with same X-Idempotency-Key are rejected with 409 Conflict.
+3. Hybrid Storage: Connects to MySQL 8.0 or falls back to In-Memory ConcurrentHashMap store.
+========================================`;
+}
+
+async function generateRAGResponse(query) {
+    const ragContext = buildRAGContext();
+    const q = query.toLowerCase();
+
+    // 1. If user provided a Gemini API Key in Settings, use Google Gemini API
+    if (userGeminiApiKey) {
+        try {
+            const apiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${userGeminiApiKey}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [
+                            { text: `You are CorePay AI Assistant. Use the following RAG context to answer the user's question accurately.\n\n${ragContext}\n\nUser Question: ${query}` }
+                        ]
+                    }]
+                })
+            });
+            const data = await apiRes.json();
+            if (data.candidates && data.candidates[0].content.parts[0].text) {
+                return data.candidates[0].content.parts[0].text.replace(/\n/g, '<br>');
+            }
+        } catch (e) {
+            console.warn('Gemini API call failed, using built-in RAG fallback', e);
+        }
+    }
+
+    // 2. Intelligent Built-in RAG Assistant Fallback
+    if (q.includes('liquidity') || q.includes('reserve') || q.includes('balance') || q.includes('total')) {
+        const total = cachedAccounts.reduce((sum, acc) => sum + Number(acc.balance || 0), 0);
+        return `Current system total liquidity is <strong>$${total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD</strong> across <strong>${cachedAccounts.length}</strong> active ledger accounts.`;
+    }
+
+    if (q.includes('who') || q.includes('recipient') || q.includes('bob') || q.includes('alice') || q.includes('transfer')) {
+        if (cachedTransactions.length === 0) {
+            return 'No transactions have been processed yet. You can click <strong>+ Transfer</strong> to send funds!';
+        }
+        const lastTx = cachedTransactions[0];
+        const source = cachedAccounts.find(a => a.id === lastTx.sourceId) || { holderName: `Acc #${lastTx.sourceId}` };
+        const target = cachedAccounts.find(a => a.id === lastTx.targetId) || { holderName: `Acc #${lastTx.targetId}` };
+        
+        return `The most recent transaction is <strong>${escapeHtml(lastTx.ref)}</strong>.<br>Amount: <strong>$${Number(lastTx.amount).toFixed(2)}</strong> sent from <strong>${escapeHtml(source.holderName)}</strong> to <strong>${escapeHtml(target.holderName)}</strong>.`;
+    }
+
+    if (q.includes('double entry') || q.includes('debit') || q.includes('credit') || q.includes('rule') || q.includes('how')) {
+        return `CorePay enforces strict <strong>Double-Entry Accounting</strong>: Every transfer atomically logs a matching <strong>DEBIT</strong> record for the source account and a <strong>CREDIT</strong> record for the target account, guaranteeing zero balance discrepancies.`;
+    }
+
+    if (q.includes('idempotency') || q.includes('duplicate') || q.includes('key')) {
+        return `CorePay's <strong>Idempotency Engine</strong> tracks `X-Idempotency-Key` headers in a sliding-window queue (`IdempotencyQueue.java`). Any duplicate transfer request within the window is blocked with HTTP 409 Conflict.`;
+    }
+
+    if (q.includes('account') || q.includes('list')) {
+        const list = cachedAccounts.map(a => `<li><strong>${escapeHtml(a.holderName)}</strong> (${escapeHtml(a.accountNumber)}): $${Number(a.balance).toFixed(2)}</li>`).join('');
+        return `Registered CorePay Accounts:<ul style="margin-left: 1.2rem; margin-top: 0.4rem;">${list}</ul>`;
+    }
+
+    // Default intelligent summary
+    return `Based on live RAG context:<br>- System Liquidity: <strong>$${cachedAccounts.reduce((s, a) => s + Number(a.balance || 0), 0).toFixed(2)}</strong><br>- Active Accounts: <strong>${cachedAccounts.length}</strong><br>- Recent Tx Count: <strong>${cachedTransactions.length}</strong><br>How else can I assist with your ledger?`;
 }
 
 function escapeHtml(str) {
