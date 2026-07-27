@@ -29,8 +29,9 @@
 
 ## Key Features & Architecture
 
-For in-depth architectural details, refer to [KEY_FEATURES.md](KEY_FEATURES.md).  
-For technical interview preparation and cross-questions, refer to [INTERVIEW_GUIDE.md](INTERVIEW_GUIDE.md).
+For full system architecture diagrams & sequence flows, refer to [ARCHITECTURE.md](other_docs/ARCHITECTURE.md).  
+For in-depth key feature breakdowns, refer to [KEY_FEATURES.md](other_docs/KEY_FEATURES.md).  
+For technical interview preparation and cross-questions, refer to [INTERVIEW_GUIDE.md](other_docs/INTERVIEW_GUIDE.md).
 
 - **Atomic Double-Entry Accounting:** Every transfer atomically logs matching `DEBIT` (source account) and `CREDIT` (target account) records, preserving system-wide balance integrity.
 - **Idempotency Protection Engine:** Prevents duplicate charges or double transfers during network retries using custom `X-Idempotency-Key` deduplication.

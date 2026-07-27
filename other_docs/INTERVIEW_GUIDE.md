@@ -36,6 +36,23 @@ This cheat sheet equips you to pitch **CorePay** to interviewers, defend your ar
 
 ---
 
+## 0.1 Has This Problem Been Solved Before in the Industry?
+
+> **Yes!** Companies like **Stripe, Wise, PayPal, and Revolut** solved these exact problems using internal ledger engines (e.g., Stripe's *LedgerDB*). 
+
+### Why Building CorePay is Impressive in an Interview:
+Most candidates build simple CRUD payment apps using `UPDATE balance = balance - X`. Those apps break in real life when networks lag or servers crash. 
+
+By building **CorePay**, you proved that you understand **how real-world fintech giants work under the hood**:
+1. You didn't just write basic SQL; you implemented **Double-Entry Accounting**.
+2. You didn't ignore network retries; you implemented **Idempotency Header Queues**.
+3. You didn't rely on Spring Boot magic; you engineered native **Java Multithreading & Hybrid Fallback** from first principles.
+
+### 💬 What to Say if the Interviewer Asks: *"Hasn't Stripe already solved this?"*
+> *"Yes! Stripe and Wise solved this for their platforms. My goal wasn't to compete with Stripe, but to **re-engineer their underlying core architecture from scratch in pure Java**. Most project tutorials ignore race conditions, idempotency, and double-entry accounting. Building CorePay allowed me to master the exact low-level distributed systems patterns that real-world fintech engineering teams rely on."*
+
+---
+
 ## 1. The 60-Second "Elevator Pitch"
 *(Use this when the interviewer asks: "Tell me about your project")*
 
