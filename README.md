@@ -1,24 +1,39 @@
-# Core-Pay | High-Performance Financial Ledger & RESTful API
+# CorePay | High-Performance Financial Ledger & RESTful API
 
 [![Java](https://img.shields.io/badge/Java-17%2B-orange.svg)](https://www.oracle.com/java/)
 [![Architecture](https://img.shields.io/badge/Architecture-Double--Entry%20Ledger-blue.svg)]()
 [![Idempotency](https://img.shields.io/badge/Engine-Idempotent%20Safe-green.svg)]()
-[![UI](https://img.shields.io/badge/Frontend-Vanilla%20HTML5%2FCSS3-violet.svg)]()
+[![UI](https://img.shields.io/badge/Frontend-Dark%20Frosted%20Glassmorphism-violet.svg)]()
 [![License](https://img.shields.io/badge/License-MIT-brightgreen.svg)]()
 
-**Core-Pay** is an enterprise-grade financial ledger engine and RESTful API designed to handle atomic payment transfers, double-entry accounting entries, and idempotency guarantees. It comes with a modern glassmorphism web dashboard for real-time transaction monitoring and account management.
+**CorePay** is an enterprise-grade financial ledger engine and RESTful API built in Java. It handles atomic payment transfers, double-entry accounting logs, and sliding-window idempotency guarantees with zero-downtime hybrid storage fallback. It comes equipped with a modern dark frosted glass web dashboard for real-time transaction monitoring and account management.
 
 ---
 
-## Key Features
+## Web Dashboard Showcase
+
+### 1. Payment Application Dashboard (Home View)
+![CorePay Dashboard](docs/images/dashboard.png)
+
+### 2. Transaction History & Audit Log (Double-Entry Log)
+![CorePay Transaction History](docs/images/history.png)
+
+### 3. Send Money Transfer Modal (Preset Amounts & Idempotency)
+![CorePay Transfer Modal](docs/images/transfer_modal.png)
+
+---
+
+## Key Features & Architecture
+
+For in-depth architectural details, refer to [KEY_FEATURES.md](KEY_FEATURES.md).
 
 - **Atomic Double-Entry Accounting:** Every transfer atomically logs matching `DEBIT` (source account) and `CREDIT` (target account) records, preserving system-wide balance integrity.
 - **Idempotency Protection Engine:** Prevents duplicate charges or double transfers during network retries using custom `X-Idempotency-Key` deduplication.
 - **Smart Hybrid Storage (Zero Downtime):** Connects to MySQL 8.0 for production storage and automatically falls back to a high-performance **In-Memory Store** if MySQL is offline.
-- **Real-Time Glassmorphism Web Dashboard:**
-  - **Dashboard View:** System liquidity metrics, live account cards, and recent transactions.
-  - **Accounts View:** Full account directory with instant search filtering and quick transfer shortcuts.
-  - **Ledger Entries View:** Complete audit trail showing `DEBIT` / `CREDIT` breakdowns for every transaction.
+- **Dark Frosted Glass Web Dashboard:**
+  - **Home View:** Virtual card display (`CorePay Vault`), system liquidity metrics, quick action pills, favorite transfer contacts, and recent transaction feeds.
+  - **Cards & Accounts View:** Full account directory with instant search filtering and quick transfer shortcuts.
+  - **History View:** Complete audit trail showing `DEBIT` / `CREDIT` breakdowns for every transaction.
   - **Settings View:** Configurable API URLs, live polling rates (3s, 5s, 10s, manual), and system diagnostics.
 
 ---
@@ -27,10 +42,16 @@
 
 ```
 core-pay/
-├── README.md                  # Project Documentation
+├── README.md                  # Main Documentation
+├── KEY_FEATURES.md            # Detailed Architectural & Key Features Guide
+├── docs/
+│   └── images/                # Dashboard Screenshots & UI Assets
+│       ├── dashboard.png
+│       ├── history.png
+│       └── transfer_modal.png
 ├── frontend/
 │   ├── index.html             # Multi-view Admin Dashboard HTML
-│   ├── style.css              # Glassmorphism dark-mode UI styles
+│   ├── style.css              # Dark Frosted Glassmorphism UI styles
 │   └── script.js              # SPA navigation, live polling, and API client
 └── java-backend/
     ├── pom.xml                # Maven build configuration
@@ -38,15 +59,15 @@ core-pay/
         └── main/
             ├── java/com/corepay/
             │   ├── server/
-            │   │   └── TransactionServer.java   # Lightweight HTTP REST Server (Port 8080)
+            │   │   └── TransactionServer.java   # Native Java HTTP Server (Port 8080)
             │   ├── service/
-            │   │   └── LedgerEngine.java        # Core Double-Entry Processing Engine
+            │   │   └── LedgerEngine.java        # Double-Entry Transfer Engine
             │   ├── dsa/
             │   │   └── IdempotencyQueue.java    # Sliding-window Deduplication Queue
             │   └── dao/
-            │       ├── AccountDao.java           # Account data layer (MySQL + In-Memory)
-            │       ├── TransactionDao.java       # Transaction logs & audit entries
-            │       └── DatabaseConnection.java   # JDBC connection pool manager
+            │       ├── AccountDao.java           # Account Data Access (MySQL + In-Memory)
+            │       ├── TransactionDao.java       # Audit Log Data Access
+            │       └── DatabaseConnection.java   # Connection Pool Manager
             └── resources/
                 └── db_schema.sql                # MySQL relational schema & seed data
 ```
@@ -101,8 +122,6 @@ python -m http.server 8000
 ```
 
 Now open your browser at: **`http://localhost:8000`**
-
-*(Or simply open `frontend/index.html` directly in your browser).*
 
 ---
 
@@ -181,7 +200,7 @@ Base URL: `http://localhost:8080/api`
 
 If you prefer using a persistent MySQL database instead of In-Memory mode:
 
-1. Open MySQL terminal/workbench and execute [db_schema.sql](file:///c:/Users/Mridul/Desktop/core-pay/java-backend/src/main/resources/db_schema.sql):
+1. Open MySQL terminal/workbench and execute [db_schema.sql](java-backend/src/main/resources/db_schema.sql):
    ```sql
    SOURCE java-backend/src/main/resources/db_schema.sql;
    ```
