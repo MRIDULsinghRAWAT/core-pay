@@ -353,5 +353,42 @@ CorePay uses **MySQL 8.0** as its primary relational database for persistent dou
 
 ---
 
+## 🌐 Production Deployment Guide
+
+### 1. Backend Deployment (Render / Railway / Docker)
+
+- **Option A: Deploy to Render.com (Free Web Service)**
+  1. Push code to GitHub and connect repo to [Render.com](https://render.com).
+  2. Create a new **Web Service**, select **Docker** environment.
+  3. Set Dockerfile Path to: `java-backend/Dockerfile`.
+  4. Render will auto-build and assign a public URL (e.g. `https://core-pay-backend.onrender.com`).
+
+- **Option B: Run via Docker Container (Local / VPS)**
+  ```bash
+  docker build -t core-pay-backend -f java-backend/Dockerfile .
+  docker run -p 8080:8080 core-pay-backend
+  ```
+
+---
+
+### 2. Frontend Deployment (Vercel / Netlify / GitHub Pages)
+
+- **Option A: Deploy to Vercel (1-Click)**
+  1. Import project repository into [Vercel.com](https://vercel.com).
+  2. Vercel automatically detects `vercel.json` and deploys the static dashboard!
+
+- **Option B: Deploy to GitHub Pages**
+  1. Go to repository **Settings** -> **Pages**.
+  2. Select Source `main` branch and folder `/frontend`.
+
+---
+
+### 3. Connect Frontend to Deployed Backend
+
+Open the deployed frontend web dashboard, navigate to **Settings View**, and update **API Base URL** to your deployed backend URL:
+`https://your-backend-url.onrender.com/api`
+
+---
+
 ## License
 This project is open-source under the MIT License.

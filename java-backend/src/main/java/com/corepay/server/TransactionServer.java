@@ -177,7 +177,14 @@ public class TransactionServer {
 
     public static void main(String[] args) {
         try {
-            TransactionServer server = new TransactionServer(8080);
+            int port = 8080;
+            String envPort = System.getenv("PORT");
+            if (envPort != null && !envPort.isEmpty()) {
+                try {
+                    port = Integer.parseInt(envPort);
+                } catch (NumberFormatException ignored) {}
+            }
+            TransactionServer server = new TransactionServer(port);
             server.start();
         } catch (Exception e) {
             e.printStackTrace();

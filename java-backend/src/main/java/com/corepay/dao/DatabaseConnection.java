@@ -16,6 +16,22 @@ public class DatabaseConnection {
         } catch (ClassNotFoundException e) {
             throw new SQLException("MySQL JDBC Driver not found", e);
         }
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+
+        String url = System.getenv("DB_URL");
+        if (url == null || url.isEmpty()) {
+            url = URL;
+        }
+
+        String user = System.getenv("DB_USER");
+        if (user == null || user.isEmpty()) {
+            user = USER;
+        }
+
+        String password = System.getenv("DB_PASSWORD");
+        if (password == null) {
+            password = PASSWORD;
+        }
+
+        return DriverManager.getConnection(url, user, password);
     }
 }
