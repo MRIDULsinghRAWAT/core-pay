@@ -147,10 +147,10 @@ When demonstrating the UI or explaining account balances to an interviewer, use 
 ```
 
 ### Key Java Classes to Highlight:
-- `TransactionServer.java`: Handles routing (`/api/accounts`, `/api/transactions`, `/api/transfer`), CORS headers, and request body parsing.
+- `TransactionServer.java`: Handles HTTP routing (`GET/POST /api/accounts`, `/api/transactions`, `/api/transfer`), CORS headers, and JSON request body parsing.
 - `LedgerEngine.java`: Executes atomic double-entry operations (`DEBIT` source, `CREDIT` target).
 - `IdempotencyQueue.java`: Implements a sliding-window queue (capacity: 1000 keys) to block duplicate requests within the time window.
-- `AccountDao.java` & `TransactionDao.java`: Implements smart dual-mode persistence (tries SQL JDBC connection first; falls back to thread-safe `ConcurrentHashMap` if SQL fails).
+- `AccountDao.java` & `TransactionDao.java`: Implements smart dual-mode persistence (`createAccount()`, balance updates, fetching records via MySQL JDBC or thread-safe `ConcurrentHashMap` fallback).
 
 ---
 
@@ -218,6 +218,10 @@ In `LedgerEngine.java`, we manage SQL transactions manually to guarantee **ACID 
 ### Q7: Why use `DECIMAL(15,2)` in SQL instead of `FLOAT` or `DOUBLE`?
 > **Answer:** 
 > *"Floating-point types like `FLOAT` and `DOUBLE` use binary floating-point representation, which causes rounding errors in monetary calculations (e.g. `0.1 + 0.2 = 0.30000000000000004`). `DECIMAL(15,2)` stores numbers as exact fixed-point decimal values in SQL, matching Java's `BigDecimal` and guaranteeing penny-exact financial accuracy."*
+
+### Q8: How does dynamic account creation work and how is data persisted?
+> **Answer:** 
+> *"When a new account is created via `POST /api/accounts`, our `AccountDao.createAccount()` method auto-generates a unique account number (`ACC-100X`) and executes an `INSERT INTO accounts` query if MySQL is active, while simultaneously updating our thread-safe `ConcurrentHashMap` in-memory store. This guarantees that newly created accounts persist permanently in the database and appear dynamically on the UI dashboard without requiring server restarts."*
 
 ---
 

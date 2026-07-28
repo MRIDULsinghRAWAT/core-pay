@@ -149,12 +149,13 @@ sequenceDiagram
 ## Key Features & Architecture
 
 - **Atomic Double-Entry Accounting:** Every transfer atomically logs matching `DEBIT` (source account) and `CREDIT` (target account) records, preserving system-wide balance integrity.
+- **Dynamic Account Creation:** Supports creating new financial accounts on the fly via `POST /api/accounts` with auto-generated account numbers (`ACC-100X`) and dual-mode persistence (MySQL DB + In-Memory Store).
 - **Idempotency Protection Engine:** Prevents duplicate charges or double transfers during network retries using custom `X-Idempotency-Key` deduplication.
 - **Smart Hybrid Storage (Zero Downtime):** Connects to MySQL 8.0 for production storage and automatically falls back to a high-performance **In-Memory Store** if MySQL is offline.
 - **Real-Time AI RAG Financial Assistant:** Floating glassmorphic widget querying live ledger data (liquidity metrics, accounts, recent transfers, double-entry rules) with dual-mode support for Google Gemini API or intelligent offline RAG engine fallback.
 - **Dark Frosted Glass Web Dashboard:**
   - **Home View:** Virtual card display (`CorePay Vault`), system liquidity metrics, quick action pills, favorite transfer contacts, and recent transaction feeds.
-  - **Cards & Accounts View:** Full account directory with instant search filtering and quick transfer shortcuts.
+  - **Cards & Accounts View:** Full account directory with instant search filtering, new account modal (`+ Add Account`), and quick transfer shortcuts.
   - **History View:** Complete audit trail showing `DEBIT` / `CREDIT` breakdowns for every transaction.
   - **Settings View:** Configurable API URLs, Gemini AI API key inputs, live polling rates (3s, 5s, 10s, manual), and system diagnostics.
 
