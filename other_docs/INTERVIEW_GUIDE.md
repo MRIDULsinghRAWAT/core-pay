@@ -14,9 +14,9 @@ This cheat sheet equips you to pitch **CorePay** to interviewers, defend your ar
 ### ❓ What 3 Main Problems Do We Solve?
 
 #### Problem 1: Money Disappears Midway
-- **What goes wrong:** In basic apps, if the server crashes while sending $100 from Alice to Bob, Alice loses $100, but Bob gets $0!
+- **What goes wrong:** In basic apps, if the server crashes while sending $100 from Mridul to Don, Mridul loses $100, but Don gets $0!
 - **Our Solution:** **Double-Entry Ledger Engine**  
-  - We log two matching records at the exact same second: a `DEBIT` (minus $100 from Alice) and a `CREDIT` (plus $100 to Bob).  
+  - We log two matching records at the exact same second: a `DEBIT` (minus $100 from Mridul) and a `CREDIT` (plus $100 to Don).  
   - If any step fails, the whole transaction cancels automatically (`ROLLBACK`). Money is never lost!
 
 #### Problem 2: Double-Charging On Double Click or Poor Internet
@@ -58,12 +58,12 @@ By building **CorePay**, you proved that you understand **how real-world fintech
 When demonstrating the UI or explaining account balances to an interviewer, use this exact live example:
 
 ### 💳 Initial Default Accounts & Seed Balances:
-- **`ACC-1001` (Alice Smith):** Starting Balance = **`$5,000.00 USD`**
-- **`ACC-1002` (Bob Jones):** Starting Balance = **`$2,500.00 USD`**
+- **`ACC-1001` (Mridul):** Starting Balance = **`$5,000.00 USD`**
+- **`ACC-1002` (Don):** Starting Balance = **`$2,500.00 USD`**
 - **`ACC-1003` (Core-Pay Reserve):** Starting Balance = **`$100,000.00 USD`**
 
-### 🔄 Live Transfer Walkthrough ($250.00 Transfer from Alice to Reserve):
-1. **Source Account (`ACC-1001` Alice):**  
+### 🔄 Live Transfer Walkthrough ($250.00 Transfer from Mridul to Reserve):
+1. **Source Account (`ACC-1001` Mridul):**  
    `DEBIT` Entry of **`-$250.00`** -> New Balance: **`$4,750.00`**
 2. **Target Account (`ACC-1003` Core-Pay Reserve):**  
    `CREDIT` Entry of **`+$250.00`** -> New Balance: **`$100,250.00`**

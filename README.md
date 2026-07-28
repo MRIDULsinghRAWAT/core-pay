@@ -119,7 +119,7 @@ sequenceDiagram
 
 ```
                        TRANSFER REQUEST: $100.00
-                       Alice (Acc #1) ──► Bob (Acc #2)
+                       Mridul (Acc #1) ──► Don (Acc #2)
                                    │
                                    ▼
                    ┌───────────────────────────────┐
@@ -130,7 +130,7 @@ sequenceDiagram
                  ▼                                   ▼
     ┌───────────────────────────┐       ┌───────────────────────────┐
     │     DEBIT ENTRY           │       │     CREDIT ENTRY          │
-    │ Source: Acc #1 (Alice)    │       │ Target: Acc #2 (Bob)      │
+    │ Source: Acc #1 (Mridul)   │       │ Target: Acc #2 (Don)      │
     │ Amount: -$100.00          │       │ Amount: +$100.00          │
     │ Balance: $4900.00         │       │ Balance: $2600.00         │
     └───────────────────────────┘       └───────────────────────────┘
@@ -234,14 +234,14 @@ Base URL: `http://localhost:8080/api`
   {
     "id": 1,
     "accountNumber": "ACC-1001",
-    "holderName": "Alice Smith",
+    "holderName": "Mridul",
     "balance": 4900.00,
     "currency": "USD"
   },
   {
     "id": 2,
     "accountNumber": "ACC-1002",
-    "holderName": "Bob Jones",
+    "holderName": "Don",
     "balance": 2600.00,
     "currency": "USD"
   }

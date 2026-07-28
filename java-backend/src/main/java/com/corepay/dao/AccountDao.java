@@ -28,8 +28,8 @@ public class AccountDao {
     private static final Map<Integer, Account> inMemoryAccounts = new ConcurrentHashMap<>();
 
     static {
-        inMemoryAccounts.put(1, new Account(1, "ACC-1001", "Alice Smith", new BigDecimal("5000.00"), "USD"));
-        inMemoryAccounts.put(2, new Account(2, "ACC-1002", "Bob Jones", new BigDecimal("2500.00"), "USD"));
+        inMemoryAccounts.put(1, new Account(1, "ACC-1001", "Mridul", new BigDecimal("5000.00"), "USD"));
+        inMemoryAccounts.put(2, new Account(2, "ACC-1002", "Don", new BigDecimal("2500.00"), "USD"));
         inMemoryAccounts.put(3, new Account(3, "ACC-1003", "Core-Pay Reserve", new BigDecimal("100000.00"), "USD"));
     }
 

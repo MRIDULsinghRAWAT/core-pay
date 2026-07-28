@@ -131,7 +131,7 @@ In CorePay, money is never simply deleted from one row and added to another. Eve
 
 ```
                        TRANSFER REQUEST: $100.00
-                       Alice (Acc #1) ──► Bob (Acc #2)
+                       Mridul (Acc #1) ──► Don (Acc #2)
                                    │
                                    ▼
                    ┌───────────────────────────────┐
@@ -142,7 +142,7 @@ In CorePay, money is never simply deleted from one row and added to another. Eve
                  ▼                                   ▼
     ┌───────────────────────────┐       ┌───────────────────────────┐
     │     DEBIT ENTRY           │       │     CREDIT ENTRY          │
-    │ Source: Acc #1 (Alice)    │       │ Target: Acc #2 (Bob)      │
+    │ Source: Acc #1 (Mridul)   │       │ Target: Acc #2 (Don)      │
     │ Amount: -$100.00          │       │ Amount: +$100.00          │
     │ Balance: $4900.00         │       │ Balance: $2600.00         │
     └───────────────────────────┘       └───────────────────────────┘

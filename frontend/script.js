@@ -519,8 +519,8 @@ function filterTransactions(query) {
 
 function renderAccountsFallback() {
     const fallbackAccounts = [
-        { id: 1, holderName: "Alice Smith", accountNumber: "ACC-1001", balance: 5000.00, currency: "USD" },
-        { id: 2, holderName: "Bob Jones", accountNumber: "ACC-1002", balance: 2500.00, currency: "USD" },
+        { id: 1, holderName: "Mridul", accountNumber: "ACC-1001", balance: 5000.00, currency: "USD" },
+        { id: 2, holderName: "Don", accountNumber: "ACC-1002", balance: 2500.00, currency: "USD" },
         { id: 3, holderName: "Core-Pay Reserve", accountNumber: "ACC-1003", balance: 100000.00, currency: "USD" }
     ];
     updateAccountViews(fallbackAccounts);
@@ -664,7 +664,7 @@ async function generateRAGResponse(query) {
         return `Current system total liquidity is <strong>$${total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD</strong> across <strong>${cachedAccounts.length}</strong> active ledger accounts.`;
     }
 
-    if (q.includes('who') || q.includes('recipient') || q.includes('bob') || q.includes('alice') || q.includes('transfer')) {
+    if (q.includes('who') || q.includes('recipient') || q.includes('don') || q.includes('mridul') || q.includes('bob') || q.includes('alice') || q.includes('transfer')) {
         if (cachedTransactions.length === 0) {
             return 'No transactions have been processed yet. You can click <strong>+ Transfer</strong> to send funds!';
         }
