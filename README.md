@@ -387,8 +387,8 @@ CorePay uses **MySQL 8.0** as its primary relational database for persistent dou
 
 ### 3. Connect Frontend to Deployed Backend
 
-Open the deployed frontend web dashboard, navigate to **Settings View**, and update **API Base URL** to your deployed backend URL:
-`https://your-backend-url.onrender.com/api`
+Open the deployed frontend web dashboard, navigate to **Settings View**, and update **API Base URL** to your deployed live backend URL:
+`https://core-pay-ogar.onrender.com/api`
 
 ---
 
