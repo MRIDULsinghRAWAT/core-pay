@@ -247,7 +247,29 @@ Base URL: `http://localhost:8080/api`
 ]
 ```
 
-### 2. Get Transaction Audit Logs
+### 2. Create New Account
+- **Endpoint:** `POST /api/accounts`
+- **Headers:** `Content-Type: application/json`
+- **Request Body:**
+```json
+{
+  "holderName": "Charlie Brown",
+  "balance": 1500.00,
+  "currency": "USD"
+}
+```
+- **Response `201 Created`:**
+```json
+{
+  "id": 4,
+  "accountNumber": "ACC-1004",
+  "holderName": "Charlie Brown",
+  "balance": 1500.00,
+  "currency": "USD"
+}
+```
+
+### 3. Get Transaction Audit Logs
 - **Endpoint:** `GET /api/transactions`
 - **Response `200 OK`:**
 ```json
@@ -264,7 +286,7 @@ Base URL: `http://localhost:8080/api`
 ]
 ```
 
-### 3. Execute Transfer
+### 4. Execute Transfer
 - **Endpoint:** `POST /api/transfer`
 - **Headers:** `Content-Type: application/json`, `X-Idempotency-Key: key_123456`
 - **Request Body:**
