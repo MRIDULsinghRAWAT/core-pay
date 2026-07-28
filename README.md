@@ -202,73 +202,22 @@ core-pay/
 
 ## Quick Start Guide
 
-### Prerequisites
-- **Java JDK 17** or higher (`java -version`, `javac -version`)
-- **Python 3.x** or **Node.js** *(Optional - for static HTTP server)*
-- **Web Browser** (Chrome, Firefox, Edge, Safari)
-- *(Optional)* **MySQL Server 8.0** *(In-Memory mode runs automatically if MySQL is not active)*
-
----
-
-### Step 1: Run Java Backend Server
-
-Open **Terminal 1** and run these commands:
-
+### Step 1: Run Backend (Terminal 1)
 ```bash
-# 1. Navigate to backend directory
 cd java-backend
-
-# 2. Compile all Java source files
 javac -d target/classes src/main/java/com/corepay/*/*.java src/main/java/com/corepay/*/*/*.java
-
-# 3. Start the Transaction Server
 java -cp target/classes com.corepay.server.TransactionServer
 ```
 
-*Expected Output:*
-```text
-Core-Pay HTTP Server running on port 8080
-```
-
-> [!TIP]
-> **If Port 8080 is already in use (`Address already in use: bind`):**  
-> - **PowerShell (Windows):** `Stop-Process -Id (Get-NetTCPConnection -LocalPort 8080).OwningProcess -Force`
-> - **Command Prompt (CMD):** `for /f "tokens=5" %a in ('netstat -aon ^| findstr :8080') do taskkill /F /PID %a`
-> - **Linux / macOS:** `kill -9 $(lsof -t -i:8080)`  
-> Then re-run the `java -cp target/classes com.corepay.server.TransactionServer` command!
-
----
-
-### Step 2: Run Web Dashboard Frontend
-
-Choose any of these **3 easy methods**:
-
-#### Method A: Direct File Open (Easiest — No Terminal Required)
-Simply double-click or open [frontend/index.html](file:///c:/Users/Mridul/Desktop/core-pay/frontend/index.html) directly in Chrome, Edge, or Firefox!
-
-#### Method B: Python Web Server (Terminal)
-Open **Terminal 2** and run:
+### Step 2: Run Frontend (Terminal 2)
 ```bash
 cd frontend
 python -m http.server 8000
-# Or if 'python' command gives an error, try:
-py -m http.server 8000
 ```
-Then open: **`http://localhost:8000`**
-
-#### Method C: If Port 8000 is Already Occupied
-```bash
-cd frontend
-python -m http.server 8081
-```
-Then open: **`http://localhost:8081`**
-
----
+*(Or simply double-click [frontend/index.html](file:///c:/Users/Mridul/Desktop/core-pay/frontend/index.html) to open directly in your browser)*
 
 ### Step 3: Access Application
-
-1. Open your browser and navigate to: **`http://localhost:8000`**
-2. Backend API endpoint (Health check): **`http://localhost:8080/api/accounts`**
+Open your browser and visit: **`http://localhost:8000`**
 
 ---
 

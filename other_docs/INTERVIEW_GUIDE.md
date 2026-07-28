@@ -53,6 +53,25 @@ By building **CorePay**, you proved that you understand **how real-world fintech
 
 ---
 
+## 0.2 Live Accounts & Balance Calculation Walkthrough
+
+When demonstrating the UI or explaining account balances to an interviewer, use this exact live example:
+
+### 💳 Initial Default Accounts & Seed Balances:
+- **`ACC-1001` (Alice Smith):** Starting Balance = **`$5,000.00 USD`**
+- **`ACC-1002` (Bob Jones):** Starting Balance = **`$2,500.00 USD`**
+- **`ACC-1003` (Core-Pay Reserve):** Starting Balance = **`$100,000.00 USD`**
+
+### 🔄 Live Transfer Walkthrough ($250.00 Transfer from Alice to Reserve):
+1. **Source Account (`ACC-1001` Alice):**  
+   `DEBIT` Entry of **`-$250.00`** -> New Balance: **`$4,750.00`**
+2. **Target Account (`ACC-1003` Core-Pay Reserve):**  
+   `CREDIT` Entry of **`+$250.00`** -> New Balance: **`$100,250.00`**
+3. **Double-Entry Accounting Verification:**  
+   `Sum(DEBIT) + Sum(CREDIT) = -$250.00 + $250.00 = $0.00` (System-wide zero-sum balance is mathematically preserved!).
+
+---
+
 ## 1. The 60-Second "Elevator Pitch"
 *(Use this when the interviewer asks: "Tell me about your project")*
 
@@ -135,6 +154,41 @@ By building **CorePay**, you proved that you understand **how real-world fintech
 
 ---
 
+## 5.1 Comprehensive SQL Database Architecture & Transaction Management
+
+In an interview, when asked **"Where and how is SQL used in this project?"**, explain these **4 Core Pillars**:
+
+### 1. Database Schema & Relational Tables ([db_schema.sql](file:///c:/Users/Mridul/Desktop/core-pay/java-backend/src/main/resources/db_schema.sql))
+The SQL database consists of **4 normalized tables** designed for financial compliance and high auditability:
+- **`accounts`**: Stores account details (`account_id`, `account_number`, `holder_name`, `balance`, `currency`, `created_at`). Uses `DECIMAL(15,2)` for exact monetary precision (never `FLOAT`/`DOUBLE` to avoid floating-point rounding bugs).
+- **`transactions`**: Stores main transaction headers (`transaction_id`, `transaction_ref`, `source_account_id`, `target_account_id`, `amount`, `status`, `created_at`). Linked via Foreign Keys to `accounts`.
+- **`ledger_entries`**: Stores matching `DEBIT` and `CREDIT` double-entry accounting records (`entry_id`, `transaction_id`, `account_id`, `entry_type ENUM('DEBIT','CREDIT')`, `amount`).
+- **`idempotency_keys`**: Stores processed `idempotency_key` (VARCHAR UNIQUE) and cached response payloads for persistent deduplication across server restarts.
+
+### 2. JDBC & Prepared Statements (Data Access Layer)
+- **[DatabaseConnection.java](file:///c:/Users/Mridul/Desktop/core-pay/java-backend/src/main/java/com/corepay/dao/DatabaseConnection.java)**: Manages JDBC connection pooling via MySQL Driver (`com.mysql.cj.jdbc.Driver`) connecting to `jdbc:mysql://localhost:3306/corepay_db`.
+- **[AccountDao.java](file:///c:/Users/Mridul/Desktop/core-pay/java-backend/src/main/java/com/corepay/dao/AccountDao.java)**: Executes parameterized SQL queries to read accounts (`SELECT ... FROM accounts`) and update balances (`UPDATE accounts SET balance = ? WHERE account_id = ?`).
+- **[TransactionDao.java](file:///c:/Users/Mridul/Desktop/core-pay/java-backend/src/main/java/com/corepay/dao/TransactionDao.java)**: Executes `INSERT INTO transactions ...` and `SELECT ... FROM transactions ORDER BY created_at DESC`.
+
+### 3. SQL Transactions & ACID Guarantees ([LedgerEngine.java](file:///c:/Users/Mridul/Desktop/core-pay/java-backend/src/main/java/com/corepay/service/LedgerEngine.java))
+In `LedgerEngine.java`, we manage SQL transactions manually to guarantee **ACID compliance**:
+- **Disable Auto-Commit**: `conn.setAutoCommit(false);`
+- **Atomic Execution Grouping**:
+  1. Deduct source account balance (`UPDATE accounts SET balance = ?`)
+  2. Add target account balance (`UPDATE accounts SET balance = ?`)
+  3. Insert main transaction log (`INSERT INTO transactions ...`)
+  4. Insert `DEBIT` entry in `ledger_entries`
+  5. Insert `CREDIT` entry in `ledger_entries`
+- **Commit or Rollback**:
+  - If all queries succeed: `conn.commit();`
+  - If any step fails (e.g., insufficient funds or SQL error): `conn.rollback();` cancels every query in the batch so money is never lost or partially updated!
+
+### 4. Zero-Downtime Smart SQL Fallback
+- If the MySQL server drops or is offline, JDBC throws `SQLException`.
+- The DAOs catch this exception and **automatically switch to an in-memory thread-safe `ConcurrentHashMap` store**, allowing the application to continue serving transfers with zero downtime.
+
+---
+
 ## 6. Expected Interview Cross-Questions & Bulletproof Answers
 
 ### Q1: How do you handle concurrency if two users send money at the exact same time?
@@ -156,6 +210,14 @@ By building **CorePay**, you proved that you understand **how real-world fintech
 ### Q5: Why build a custom Java HTTP server instead of using Spring Boot?
 > **Answer:** 
 > *"While Spring Boot is great for enterprise production apps, building a native Java HTTP server using `com.sun.net.httpserver` allowed me to master the underlying HTTP protocol, custom header parsing, CORS handling, and thread isolation without relying on framework magic. It also resulted in sub-50ms server startup times and minimal memory footprint."*
+
+### Q6: Where is SQL used in this project and how are database transactions handled?
+> **Answer:** 
+> *"SQL is used in our persistence layer across 4 tables (`accounts`, `transactions`, `ledger_entries`, `idempotency_keys`). In `LedgerEngine.java`, we manage SQL transactions using JDBC prepared statements with `conn.setAutoCommit(false)`. We execute the balance update, transaction record creation, and `DEBIT`/`CREDIT` ledger entries inside a single atomic block. If any query fails, `conn.rollback()` is invoked, preserving complete ACID transaction integrity."*
+
+### Q7: Why use `DECIMAL(15,2)` in SQL instead of `FLOAT` or `DOUBLE`?
+> **Answer:** 
+> *"Floating-point types like `FLOAT` and `DOUBLE` use binary floating-point representation, which causes rounding errors in monetary calculations (e.g. `0.1 + 0.2 = 0.30000000000000004`). `DECIMAL(15,2)` stores numbers as exact fixed-point decimal values in SQL, matching Java's `BigDecimal` and guaranteeing penny-exact financial accuracy."*
 
 ---
 
