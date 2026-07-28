@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS idempotency_keys (
 
 -- Sample Seed Data
 INSERT INTO accounts (account_number, holder_name, balance, currency) VALUES
-('ACC-1001', 'Alice Smith', 5000.00, 'USD'),
-('ACC-1002', 'Bob Jones', 2500.00, 'USD'),
+('ACC-1001', 'Mridul', 5000.00, 'USD'),
+('ACC-1002', 'Don ', 2500.00, 'USD'),
 ('ACC-1003', 'Core-Pay Reserve', 100000.00, 'USD')
 ON DUPLICATE KEY UPDATE account_id=account_id;
