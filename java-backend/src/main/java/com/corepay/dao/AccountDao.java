@@ -95,4 +95,38 @@ public class AccountDao {
             acc.balance = newBalance;
         }
     }
+
+    public Account createAccount(String holderName, BigDecimal initialBalance, String currency) {
+        if (currency == null || currency.isEmpty()) currency = "USD";
+        if (initialBalance == null) initialBalance = BigDecimal.ZERO;
+
+        int newId = inMemoryAccounts.size() + 1;
+        while (inMemoryAccounts.containsKey(newId)) {
+            newId++;
+        }
+        String accNum = "ACC-" + (1000 + newId);
+
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String sql = "INSERT INTO accounts (account_number, holder_name, balance, currency) VALUES (?, ?, ?, ?)";
+            try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                stmt.setString(1, accNum);
+                stmt.setString(2, holderName);
+                stmt.setBigDecimal(3, initialBalance);
+                stmt.setString(4, currency);
+                stmt.executeUpdate();
+                try (ResultSet rs = stmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        newId = rs.getInt(1);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("[DB Fallback] Creating account in in-memory store: " + e.getMessage());
+        }
+
+        Account newAcc = new Account(newId, accNum, holderName, initialBalance, currency);
+        inMemoryAccounts.put(newId, newAcc);
+        return newAcc;
+    }
 }
+

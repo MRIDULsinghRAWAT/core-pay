@@ -48,6 +48,27 @@ public class TransactionServer {
                 return;
             }
 
+            if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+                try {
+                    InputStream is = exchange.getRequestBody();
+                    String body = new String(is.readAllBytes());
+                    String holderName = extractJsonVal(body, "holderName");
+                    String balanceStr = extractJsonVal(body, "balance");
+                    String currencyStr = extractJsonVal(body, "currency");
+
+                    BigDecimal balance = balanceStr.isEmpty() || balanceStr.equals("0") ? BigDecimal.ZERO : new BigDecimal(balanceStr);
+                    if (currencyStr.isEmpty() || currencyStr.equals("0")) currencyStr = "USD";
+
+                    var newAcc = accountDao.createAccount(holderName, balance, currencyStr);
+                    String resJson = String.format("{\"id\":%d,\"accountNumber\":\"%s\",\"holderName\":\"%s\",\"balance\":%.2f,\"currency\":\"%s\"}",
+                            newAcc.accountId, newAcc.accountNumber, newAcc.holderName, newAcc.balance, newAcc.currency);
+                    sendJsonResponse(exchange, 201, resJson);
+                } catch (Exception e) {
+                    sendJsonResponse(exchange, 400, "{\"error\":\"" + e.getMessage() + "\"}");
+                }
+                return;
+            }
+
             try {
                 var accounts = accountDao.getAllAccounts();
                 StringBuilder json = new StringBuilder("[");
@@ -64,6 +85,7 @@ public class TransactionServer {
             }
         }
     }
+
 
     private class TransactionsHandler implements HttpHandler {
         @Override
