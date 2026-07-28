@@ -1,6 +1,7 @@
 # CorePay | High-Performance Financial Ledger & RESTful API
 
 [![Java](https://img.shields.io/badge/Java-17%2B-orange.svg)](https://www.oracle.com/java/)
+[![Live Backend](https://img.shields.io/badge/Live%20Backend-Render.com-brightgreen.svg)](https://core-pay-ogar.onrender.com/api/accounts)
 [![Database](https://img.shields.io/badge/Database-MySQL%208.0-blue.svg)](https://www.mysql.com/)
 [![Architecture](https://img.shields.io/badge/Architecture-Double--Entry%20Ledger-blue.svg)]()
 [![Idempotency](https://img.shields.io/badge/Engine-Idempotent%20Safe-green.svg)]()
@@ -232,7 +233,8 @@ Open your browser and visit: **`http://localhost:8000`**
 
 ## API Reference
 
-Base URL: `http://localhost:8080/api`
+- **Live Production Base URL:** `https://core-pay-ogar.onrender.com/api`
+- **Local Development Base URL:** `http://localhost:8080/api`
 
 ### 1. Get Accounts
 - **Endpoint:** `GET /api/accounts`
