@@ -1,6 +1,7 @@
 # CorePay | High-Performance Financial Ledger & RESTful API
 
 [![Java](https://img.shields.io/badge/Java-17%2B-orange.svg)](https://www.oracle.com/java/)
+[![Database](https://img.shields.io/badge/Database-MySQL%208.0-blue.svg)](https://www.mysql.com/)
 [![Architecture](https://img.shields.io/badge/Architecture-Double--Entry%20Ledger-blue.svg)]()
 [![Idempotency](https://img.shields.io/badge/Engine-Idempotent%20Safe-green.svg)]()
 [![AI RAG Assistant](https://img.shields.io/badge/AI-RAG%20Financial%20Assistant-purple.svg)]()
@@ -203,6 +204,13 @@ core-pay/
 
 ## Quick Start Guide
 
+### Prerequisites
+- **Java JDK 17** or higher (`java -version`, `javac -version`)
+- **Web Browser** (Chrome, Firefox, Edge, Safari)
+- *(Optional)* **MySQL Server 8.0** *(Ties into core relational tables; In-Memory fallback operates automatically if MySQL is not active)*
+
+---
+
 ### Step 1: Run Backend (Terminal 1)
 ```bash
 cd java-backend
@@ -315,16 +323,33 @@ Base URL: `http://localhost:8080/api`
 
 ---
 
-## MySQL Database Setup (Optional)
+## MySQL Database Architecture & Setup
 
-If you prefer using a persistent MySQL database instead of In-Memory mode:
+CorePay uses **MySQL 8.0** as its primary relational database for persistent double-entry financial storage, backed by 4 normalized tables:
+- **`accounts`**: Stores account details, holder names, and balances (`DECIMAL(15,2)` precision).
+- **`transactions`**: Logs main transaction headers (`transaction_ref`, source/target account IDs, status).
+- **`ledger_entries`**: Enforces double-entry accounting by recording matching `DEBIT` and `CREDIT` rows for every transfer.
+- **`idempotency_keys`**: Caches idempotency headers to prevent duplicate charges across server restarts.
 
-1. Open MySQL terminal/workbench and execute [db_schema.sql](java-backend/src/main/resources/db_schema.sql):
-   ```sql
-   SOURCE java-backend/src/main/resources/db_schema.sql;
-   ```
-2. Ensure MySQL service `MYSQL80` is running on port `3306`.
-3. The Java server will automatically detect MySQL and switch to SQL persistence mode!
+### Running the SQL Schema:
+
+1. Ensure MySQL service (`MYSQL80`) is running on port `3306`.
+2. Execute the schema script [db_schema.sql](file:///c:/Users/Mridul/Desktop/core-pay/java-backend/src/main/resources/db_schema.sql):
+
+   - **Via Terminal (MySQL CLI):**
+     ```bash
+     mysql -u root -p < java-backend/src/main/resources/db_schema.sql
+     ```
+   - **Via Full Path (Windows):**
+     ```cmd
+     "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -u root -p < java-backend\src\main\resources\db_schema.sql
+     ```
+   - **Via MySQL Prompt (`mysql>`):**
+     ```sql
+     SOURCE java-backend/src/main/resources/db_schema.sql;
+     ```
+
+> **Zero-Downtime Fallback Note:** If MySQL is not running or offline, the Java server gracefully catches `SQLException` and automatically operates in high-performance **In-Memory Store** (`ConcurrentHashMap`) mode out of the box!
 
 ---
 
