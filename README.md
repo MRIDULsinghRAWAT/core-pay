@@ -204,50 +204,71 @@ core-pay/
 
 ### Prerequisites
 - **Java JDK 17** or higher (`java -version`, `javac -version`)
-- **Web Browser** (Chrome, Firefox, Edge, etc.)
-- *(Optional)* **MySQL Server 8.0**
+- **Python 3.x** or **Node.js** *(Optional - for static HTTP server)*
+- **Web Browser** (Chrome, Firefox, Edge, Safari)
+- *(Optional)* **MySQL Server 8.0** *(In-Memory mode runs automatically if MySQL is not active)*
 
 ---
 
-### 1. Compile & Run Java Backend
+### Step 1: Run Java Backend Server
 
-Navigate to `java-backend` and run the server using Java directly (No Maven installation required):
+Open **Terminal 1** and run these commands:
 
-#### Option A: Direct Java Command (Recommended)
-```powershell
-# Navigate to backend directory
+```bash
+# 1. Navigate to backend directory
 cd java-backend
 
-# Compile source files
-javac -cp "C:\Users\Mridul\.m2\repository\com\mysql\mysql-connector-j\8.3.0\mysql-connector-j-8.3.0.jar" -d target/classes (Get-ChildItem -Path src/main/java -Recurse -Filter *.java | Select-Object -ExpandProperty FullName)
+# 2. Compile all Java source files
+javac -d target/classes src/main/java/com/corepay/*/*.java src/main/java/com/corepay/*/*/*.java
 
-# Start Transaction Server
-java -cp "target/classes;C:\Users\Mridul\.m2\repository\com\mysql\mysql-connector-j\8.3.0\mysql-connector-j-8.3.0.jar" com.corepay.server.TransactionServer
+# 3. Start the Transaction Server
+java -cp target/classes com.corepay.server.TransactionServer
 ```
 
-#### Option B: Using Maven (If `mvn` is installed)
-```powershell
-cd java-backend
-mvn compile exec:java -Dexec.mainClass="com.corepay.server.TransactionServer"
-```
-
-*Terminal Output:*
+*Expected Output:*
 ```text
 Core-Pay HTTP Server running on port 8080
 ```
 
+> [!TIP]
+> **If Port 8080 is already in use (`Address already in use: bind`):**  
+> - **PowerShell (Windows):** `Stop-Process -Id (Get-NetTCPConnection -LocalPort 8080).OwningProcess -Force`
+> - **Command Prompt (CMD):** `for /f "tokens=5" %a in ('netstat -aon ^| findstr :8080') do taskkill /F /PID %a`
+> - **Linux / macOS:** `kill -9 $(lsof -t -i:8080)`  
+> Then re-run the `java -cp target/classes com.corepay.server.TransactionServer` command!
+
 ---
 
-### 2. Launch Web Dashboard
+### Step 2: Run Web Dashboard Frontend
 
-Navigate to `frontend` and start a simple static web server:
+Choose any of these **3 easy methods**:
 
-```powershell
+#### Method A: Direct File Open (Easiest — No Terminal Required)
+Simply double-click or open [frontend/index.html](file:///c:/Users/Mridul/Desktop/core-pay/frontend/index.html) directly in Chrome, Edge, or Firefox!
+
+#### Method B: Python Web Server (Terminal)
+Open **Terminal 2** and run:
+```bash
 cd frontend
 python -m http.server 8000
+# Or if 'python' command gives an error, try:
+py -m http.server 8000
 ```
+Then open: **`http://localhost:8000`**
 
-Now open your browser at: **`http://localhost:8000`**
+#### Method C: If Port 8000 is Already Occupied
+```bash
+cd frontend
+python -m http.server 8081
+```
+Then open: **`http://localhost:8081`**
+
+---
+
+### Step 3: Access Application
+
+1. Open your browser and navigate to: **`http://localhost:8000`**
+2. Backend API endpoint (Health check): **`http://localhost:8080/api/accounts`**
 
 ---
 
