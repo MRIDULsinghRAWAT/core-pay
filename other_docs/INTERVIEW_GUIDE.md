@@ -223,6 +223,10 @@ In `LedgerEngine.java`, we manage SQL transactions manually to guarantee **ACID 
 > **Answer:** 
 > *"When a new account is created via `POST /api/accounts`, our `AccountDao.createAccount()` method auto-generates a unique account number (`ACC-100X`) and executes an `INSERT INTO accounts` query if MySQL is active, while simultaneously updating our thread-safe `ConcurrentHashMap` in-memory store. This guarantees that newly created accounts persist permanently in the database and appear dynamically on the UI dashboard without requiring server restarts."*
 
+### Q9: Why use Structured Real-Time RAG instead of a Vector Database (Pinecone/Chroma)?
+> **Answer:** 
+> *"Vector databases (like Pinecone, Milvus, Chroma) rely on vector embeddings to perform semantic similarity searches on unstructured text (like PDFs or support articles). However, financial ledger systems require **real-time, penny-exact numerical accuracy**. Semantic similarity search cannot perform exact arithmetic or guarantee live balance state. Therefore, CorePay utilizes **Real-Time Structured Context RAG**, where live SQL/In-Memory ledger objects are retrieved directly and injected into the LLM prompt context. If scaling to millions of historical compliance documents or policy PDFs, a hybrid architecture combining `pgvector` with structured context can be used!"*
+
 ---
 
 ## 7. Quick Summary Cheatsheet for Interview Day
