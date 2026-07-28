@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 window.sendQuickPrompt = sendQuickPrompt;
 window.openTransferModal = openTransferModal;
+window.openAddAccountModal = openAddAccountModal;
 window.setPresetAmount = setPresetAmount;
 
 function initApp() {
@@ -415,6 +416,60 @@ async function submitTransfer() {
     } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = 'Confirm & Transfer';
+    }
+}
+
+function openAddAccountModal() {
+    const modal = document.getElementById('addAccountModal');
+    if (modal) {
+        document.getElementById('newHolderName').value = '';
+        document.getElementById('newInitialBalance').value = '';
+        modal.classList.add('active');
+    }
+}
+
+async function submitAddAccount() {
+    const holderName = document.getElementById('newHolderName').value.trim();
+    const balance = document.getElementById('newInitialBalance').value;
+    const currency = document.getElementById('newCurrency').value;
+
+    if (!holderName || balance === '') {
+        alert('Please fill out all required fields.');
+        return;
+    }
+
+    const btn = document.getElementById('submitAddAccountBtn');
+    btn.disabled = true;
+    btn.textContent = 'Creating...';
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/accounts`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                holderName: holderName,
+                balance: parseFloat(balance),
+                currency: currency
+            })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            alert(`Account created successfully!\nAccount Holder: ${data.holderName}\nAccount Number: ${data.accountNumber}`);
+            document.getElementById('addAccountModal').classList.remove('active');
+            document.getElementById('addAccountForm').reset();
+            fetchAccounts();
+        } else {
+            const err = await response.json();
+            alert('Failed to create account: ' + (err.error || 'Server error'));
+        }
+    } catch (e) {
+        alert('Network error connecting to backend: ' + e.message);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Create Account';
     }
 }
 
