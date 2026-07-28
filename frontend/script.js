@@ -95,6 +95,27 @@ function setupEventListeners() {
     closeBtn.addEventListener('click', closeModal);
     cancelBtn.addEventListener('click', closeModal);
 
+    // Add Account Modal
+    const addAccountModal = document.getElementById('addAccountModal');
+    const closeAddAccountBtn = document.getElementById('closeAddAccountModalBtn');
+    const cancelAddAccountBtn = document.getElementById('cancelAddAccountBtn');
+    const addAccountForm = document.getElementById('addAccountForm');
+
+    document.querySelectorAll('.openAddAccountModalBtn').forEach(btn => {
+        btn.addEventListener('click', () => openAddAccountModal());
+    });
+
+    const closeAddAccountModal = () => addAccountModal.classList.remove('active');
+    if (closeAddAccountBtn) closeAddAccountBtn.addEventListener('click', closeAddAccountModal);
+    if (cancelAddAccountBtn) cancelAddAccountBtn.addEventListener('click', closeAddAccountModal);
+
+    if (addAccountForm) {
+        addAccountForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await submitAddAccount();
+        });
+    }
+
     document.querySelectorAll('.refreshBtn').forEach(btn => {
         btn.addEventListener('click', () => {
             fetchAccounts();
