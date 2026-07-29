@@ -11,6 +11,21 @@ This cheat sheet equips you to pitch **CorePay** to interviewers, defend your ar
 
 ---
 
+### ⚡ Quick 8-10 Line Project Summary (Plain English)
+
+1. **What CorePay Is:** CorePay is a high-performance financial ledger engine and real-time transaction processing platform built in core Java.
+2. **Core Functionality:** It enables account creation, real-time fund transfers, and immutable transaction auditing without data loss or balance discrepancies.
+3. **No Spring Boot Overhead:** Built using native Java `HttpServer` and thread pool executor for sub-millisecond route handling and minimal memory footprint (~30MB).
+4. **Double-Entry Accounting:** Every transaction logs matching `DEBIT` and `CREDIT` entries in `LedgerEngine.java`, guaranteeing zero-sum balance integrity ($\sum \text{DEBITs} = \sum \text{CREDITs}$).
+5. **Atomic SQL Transactions:** Wraps balance deductions, additions, and ledger inserts inside explicit `conn.setAutoCommit(false)` blocks with automatic `rollback()` on failure.
+6. **Idempotency Protection:** Intercepts retry attempts using an `X-Idempotency-Key` header and a sliding-window queue (`IdempotencyQueue.java`), blocking duplicate payments with HTTP `409 Conflict`.
+7. **Production Database Layer:** Operates over JDBC and MySQL 8.0 in normal production mode with 4 normalized tables (`accounts`, `transactions`, `ledger_entries`, `idempotency_keys`).
+8. **Zero-Downtime Failover:** Automatically catches JDBC connection failures and fails over to an in-memory `ConcurrentHashMap` store so transfers never crash during database outages.
+9. **Real-Time RAG AI Assistant:** Injects live account balances and transaction history directly into Gemini LLM prompts for natural language financial queries without hallucinations.
+10. **Modern Web UI:** Features an iOS-style dark frosted glassmorphism SPA dashboard built in pure HTML/CSS/JS with live status polling.
+
+---
+
 ### ❓ What 3 Main Problems Do We Solve?
 
 #### Problem 1: Money Disappears Midway
